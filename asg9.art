@@ -1,0 +1,88 @@
+;TYPEDEFS
+define :numC [                  
+    num 
+][ 
+    init: [
+        this\num:  this\num
+    ]
+
+    compare: 'num
+]
+
+define :strC [
+    str
+] [ 
+    init: [
+        this\str: this\str
+    ]
+
+    compare: 'str
+]
+
+define :idC [
+    val
+] [ 
+    init: [
+        this\val: this\val
+    ]
+
+    compare: 'val
+]
+
+define :ifC [
+    test
+    then
+    else
+] [ 
+    init: [
+        this\test: this\test
+        this\then: this\then
+        this\else: this\else
+    ]
+]
+
+define :lamC [
+    params
+    body
+] [ 
+    init: [
+        this\params: this\params
+        this\body: this\body
+    ]
+]
+
+define :appC [
+    fun
+    args
+] [ 
+    init: [
+        this\fun: this\fun
+        this\args: this\args
+    ]
+]
+
+;FUNCTION DEFS
+
+; Interpreter for OAZO5 language, evaluates an ExprC and Env
+; into a Value
+interp: function[exp][
+    case [exp]
+        when?[is? :numC exp] -> return exp\num
+        when?[is? :strC exp] -> return exp\str
+        when?[is? :idC][]
+        when?[is? :ifC][]
+        when?[is? :lamC][]
+        when?[is? :appC][]
+        else[print "Error"]
+]
+
+num1: to :numC [34]      
+str1: to :strC ["hello"]
+
+;TESTCASES
+
+if? interp num1 = 34 [print "Test 1 Passed"]
+else [print "Test 1 Failed:" interp num1]
+
+if? interp str1 = "hello" [print "Test 2 Passed"]
+else [print "Test 2 Failed:" interp num1]
