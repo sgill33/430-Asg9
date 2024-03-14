@@ -1,5 +1,5 @@
 ;TYPEDEFS
-define :args [ 
+define :ExprC [ 
     tag                 
     val
     arg1
@@ -123,7 +123,7 @@ print lookup "true" topenv
 ; into a Value
 interp: function[exp env][
     case [exp]
-        when?[type exp = :args] [if? or? exp\tag = "str" exp\tag = "num" -> return exp\val
+        when?[type exp = :ExprC] [if? or? exp\tag = "str" exp\tag = "num" -> return exp\val
         else [if? exp\tag = "id" -> return (lookup exp\val env)\val
             else [
                 if? exp\tag = "if"[
@@ -141,12 +141,12 @@ interp: function[exp env][
         else -> [print "Error"]
 ]
 
-num1: to :args ["num" 1]
-num2: to :args ["num" 2]
-str1: to :args ["str" "hello"]
-id1: to :args ["id" "true"]
-if1: to :args ["if" "true" num1 num2]
-lam1: to :args ["lam" ["a" "b"] num1]
+num1: to :ExprC ["num" 1]
+num2: to :ExprC ["num" 2]
+str1: to :ExprC ["str" "hello"]
+id1: to :ExprC ["id" "true"]
+if1: to :ExprC ["if" "true" num1 num2]
+lam1: to :ExprC ["lam" ["a" "b"] num1]
 
 print interp num1 topenv
 print interp str1 topenv
