@@ -1,7 +1,9 @@
 ;TYPEDEFS
-define :oneArg [ 
+define :args [ 
     tag                 
     val
+    arg1
+    arg2
 ][ 
     init: [
         this\tag: this\tag
@@ -93,34 +95,44 @@ define :appC [
 ;FUNCTION DEFS
 
 lookup: function[for env][
-    loop env 'binding [
-        if? binding\name = for -> return binding\val
+    ensure -> is? :block env
+    ensure -> is? :string for
+    loop env 'x [
+        return x
     ]
     print "lookup error: name not found"
 ]
+print lookup "true" topenv
 
 ; Interpreter for OAZO5 language, evaluates an ExprC and Env
 ; into a Value
 interp: function[exp env][
     case [exp]
-        when?[type exp = :oneArg] [if? or? exp\tag = "str" exp\tag = "num" -> return exp\val
-        else -> return lookup exp\val env]
-        when?[type exp = :ifC]  [if? interp exp\test -> return interp test
-        else -> return interp else]
+        when?[type exp = :args] [if? or? exp\tag = "str" exp\tag = "num" -> return exp\val
+        else [if? exp\tag = "id" -> return (lookup exp\val env)\val
+            else [
+                if? exp\tag = "if"[
+                    if? interp exp\val env -> return interp arg1 env
+                else -> return interp arg2 env]
+                else [
+
+                ]
+            ]]]
         when?[is? :lamC exp] -> return exp\body
         when?[is? :appC exp] -> return exp\fun
         else -> [print "Error"]
 ]
 
-num1: to :oneArg ["num" 1]
-num2: to :oneArg ["num" 2]
-str1: to :oneArg ["str" "hello"]
-id1: to :oneArg ["id" "true"]
-if1: to :oneArg ["true" num1 num2]
+num1: to :args ["num" 1]
+num2: to :args ["num" 2]
+str1: to :args ["str" "hello"]
+id1: to :args ["id" "true"]
+if1: to :args ["if" "true" num1 num2]
 
 print interp num1 topenv
 print interp str1 topenv
 print interp id1 topenv
+print interp if1 topenv
 
 ;TESTCASES
 
