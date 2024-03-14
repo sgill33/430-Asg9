@@ -103,19 +103,20 @@ lookup: function[for env][
 ; into a Value
 interp: function[exp env][
     case [exp]
-        when?[is? :oneArg exp] [if? or? exp\tag = "str" exp\tag = "num" -> return exp\val
+        when?[type exp = :oneArg] [if? or? exp\tag = "str" exp\tag = "num" -> return exp\val
         else -> return lookup exp\val env]
-        when?[is? :strC exp] -> return exp\str
-        when?[is? :idC exp] -> return exp\val
-        when?[is? :ifC exp] -> return exp\then
+        when?[type exp = :ifC]  [if? interp exp\test -> return interp test
+        else -> return interp else]
         when?[is? :lamC exp] -> return exp\body
         when?[is? :appC exp] -> return exp\fun
         else -> [print "Error"]
 ]
 
-num1: to :oneArg ["num" 34]
+num1: to :oneArg ["num" 1]
+num2: to :oneArg ["num" 2]
 str1: to :oneArg ["str" "hello"]
 id1: to :oneArg ["id" "true"]
+if1: to :oneArg ["true" num1 num2]
 
 print interp num1 topenv
 print interp str1 topenv
