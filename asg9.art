@@ -12,6 +12,21 @@ define :args [
     compare: 'val
 ]
 
+define :funcs [ 
+    tag                 
+    arg1
+    arg2
+    arg3
+][ 
+    init: [
+        this\tag: this\tag
+        this\arg1: this\arg1
+        this\arg2: this\arg2
+        this\arg3:  this\arg3
+    ]
+    compare: 'val
+]
+
 define :Binding [ 
     name                 
     val
@@ -115,7 +130,10 @@ interp: function[exp env][
                     if? interp exp\val env -> return interp arg1 env
                 else -> return interp arg2 env]
                 else [
+                    if? exp\tag = "lam" -> return to :funcs "clo" exp\arg1 exp\arg2
+                    else [
 
+                    ]
                 ]
             ]]]
         when?[is? :lamC exp] -> return exp\body
@@ -128,11 +146,13 @@ num2: to :args ["num" 2]
 str1: to :args ["str" "hello"]
 id1: to :args ["id" "true"]
 if1: to :args ["if" "true" num1 num2]
+lam1: to :args ["lam" ["a" "b"] num1]
 
 print interp num1 topenv
 print interp str1 topenv
 print interp id1 topenv
 print interp if1 topenv
+print interp lam1 topenv
 
 ;TESTCASES
 
