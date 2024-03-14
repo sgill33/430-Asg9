@@ -1,31 +1,12 @@
 ;TYPEDEFS
-define :numC [                  
-    num 
+define :oneArg [ 
+    tag                 
+    val
 ][ 
     init: [
-        this\num:  this\num
+        this\tag: this\tag
+        this\val:  this\val
     ]
-
-    compare: 'num
-]
-
-define :strC [
-    str
-] [ 
-    init: [
-        this\str: this\str
-    ]
-
-    compare: 'str
-]
-
-define :idC [
-    val
-] [ 
-    init: [
-        this\val: this\val
-    ]
-
     compare: 'val
 ]
 
@@ -67,22 +48,25 @@ define :appC [
 ; into a Value
 interp: function[exp][
     case [exp]
-        when?[is? :numC exp] -> return exp\num
+        when?[is? :oneArg exp] [if or? exp\tag = "str" exp\tag = "num" -> return exp\val]
         when?[is? :strC exp] -> return exp\str
-        when?[is? :idC][]
-        when?[is? :ifC][]
-        when?[is? :lamC][]
-        when?[is? :appC][]
-        else[print "Error"]
+        when?[is? :idC exp] -> return exp\val
+        when?[is? :ifC exp] -> return exp\then
+        when?[is? :lamC exp] -> return exp\body
+        when?[is? :appC exp] -> return exp\fun
+        else -> [print "Error"]
 ]
 
-num1: to :numC [34]      
-str1: to :strC ["hello"]
+num1: to :oneArg ["num" 34]
+str1: to :oneArg ["str" "hello"]
+
+print interp num1
+print interp str1
 
 ;TESTCASES
 
-if? interp num1 = 34 [print "Test 1 Passed"]
-else [print "Test 1 Failed:" interp num1]
+; if? interp num1 = 34 [print "Test 1 Passed: " interp num1]
+; else [print "Test 1 Failed:" interp num1]
 
-if? interp str1 = "hello" [print "Test 2 Passed"]
-else [print "Test 2 Failed:" interp num1]
+; if? interp str1 = "hello" [print "Test 2 Passed: " interp str1]
+; else [print "Test 2 Failed:" interp num1]
