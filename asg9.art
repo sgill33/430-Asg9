@@ -10,6 +10,55 @@ define :oneArg [
     compare: 'val
 ]
 
+define :Binding [ 
+    name                 
+    val
+][ 
+    init: [
+        this\name: this\name
+        this\val:  this\val
+    ]
+] 
+
+addP: function[a b][
+    a + b
+]
+subP: function[a b][
+    a - b
+]
+multP: function[a b][
+    a * b
+]
+divP: function[a b][
+    if? b = 0 -> print "Error cannot divide by zero"
+    else -> a / b
+]
+leqP: function [a b][
+    a =< b
+]
+eqP: function [a b][
+    a = b
+]
+
+truPrim: to :Binding["true" true]
+falsPrim: to :Binding ["false" false]
+addPrim: to :Binding["+" addP]
+subPrim: to :Binding["-" subP]
+multPrim: to :Binding["*" multP]
+divPrim: to :Binding["/" divP]
+leqPrim: to :Biding["<=" leqP]
+eqPrim: to :Binding["=" eqP]
+
+top-env: [truPrim
+falsPrim
+addPrim
+subPrim
+multPrim
+divPrim
+leqPrim
+eqPrim
+]
+
 define :ifC [
     test
     then
@@ -44,11 +93,22 @@ define :appC [
 
 ;FUNCTION DEFS
 
+lookup: function[for env][
+    case[exp]
+        when?[env = []] print "lookup error: name not found"
+        else -> [
+            binding: first env
+            if? binding\name = for -> return binding\val
+            else -> [lookup for [remove env.index [size env - 1]]]
+            ]
+]
+
 ; Interpreter for OAZO5 language, evaluates an ExprC and Env
 ; into a Value
-interp: function[exp][
+interp: function[exp env][
     case [exp]
-        when?[is? :oneArg exp] [if or? exp\tag = "str" exp\tag = "num" -> return exp\val]
+        when?[is? :oneArg exp] [if? or? exp\tag = "str" exp\tag = "num" -> return exp\val
+        else -> print x return lookup x env]
         when?[is? :strC exp] -> return exp\str
         when?[is? :idC exp] -> return exp\val
         when?[is? :ifC exp] -> return exp\then
@@ -59,9 +119,11 @@ interp: function[exp][
 
 num1: to :oneArg ["num" 34]
 str1: to :oneArg ["str" "hello"]
+;d1: to :oneArg ["id" "true"]
 
-print interp num1
-print interp str1
+print interp num1 top-env
+print interp str1 top-env
+print interp id1 top-env
 
 ;TESTCASES
 
