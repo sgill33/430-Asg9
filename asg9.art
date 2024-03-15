@@ -63,17 +63,27 @@ falsPrim: to :Binding ["false" false]
 ; subPrim: to :Binding["-" subP]
 ; multPrim: to :Binding["*" multP]
 ; divPrim: to :Binding["/" divP]
-; leqPrim: to :Biding["<=" leqP]
+; leqPrim: to :Binding["<=" leqP]
 ; eqPrim: to :Binding["=" eqP]
 
-topenv: [truPrim falsPrim
-; addPrim
-; subPrim
-; multPrim
-; divPrim
-; leqPrim
-; eqPrim
+
+dicttopenv: #[
+    truPrim\name: truPrim\val
+    falsPrim\name: falsPrim\val
 ]
+
+topenv: [
+    truPrim
+    ; falsPrim
+    ; addPrim
+    ; subPrim
+    ; multPrim
+    ; divPrim
+    ; leqPrim
+    ; eqPrim
+]
+
+emptyenv: []
 
 define :ifC [
     test
@@ -109,15 +119,26 @@ define :appC [
 
 ;FUNCTION DEFS
 
-lookup: function[for env][
-    ensure -> is? :block env
-    ensure -> is? :string for
-    loop env 'x [
-        return x
+; lookup: function[for env][
+;     ensure -> is? :block env
+;     ensure -> is? :string for
+;     loop env 'x [
+;         return x
+;     ]
+;     print "lookup error: name not found"
+; ]
+; print lookup "true" topenv
+
+lookup: function [sym env][
+    if empty? env -> print "lookup error: symbol not in env"
+    else -> [
+        firstBinding: env\0
+        print firstBinding
+        ;can't get \name of :word
+        if? sym = firstBinding\name -> firstBinding\val
+        else -> lookup sym (slice env 1 (size env))
     ]
-    print "lookup error: name not found"
 ]
-print lookup "true" topenv
 
 ; Interpreter for OAZO5 language, evaluates an ExprC and Env
 ; into a Value
@@ -148,11 +169,12 @@ id1: to :ExprC ["id" "true"]
 if1: to :ExprC ["if" "true" num1 num2]
 lam1: to :ExprC ["lam" ["a" "b"] num1]
 
-print interp num1 topenv
-print interp str1 topenv
-print interp id1 topenv
-print interp if1 topenv
-print interp lam1 topenv
+; print interp num1 topenv
+; print interp str1 topenv
+; print interp id1 topenv
+; print interp if1 topenv
+; print interp lam1 topenv
+; print lookup "true" topenv
 
 ;TESTCASES
 
@@ -161,3 +183,9 @@ print interp lam1 topenv
 
 ; if? interp str1 = "hello" [print "Test 2 Passed: " interp str1]
 ; else [print "Test 2 Failed:" interp num1]
+
+; if? lookup "true" topenv = true [print "Test 3 Passed: " lookup num1]
+; else [print "Test 3 Failed"]
+
+; if? lookup "true" emptyenv [print "Test 4 Passed: " lookup num1]
+; else [print "Test 4 Failed"]
