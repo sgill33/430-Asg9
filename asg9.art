@@ -37,22 +37,30 @@ define :Binding [
     ]
 ] 
 
+; Takes in two numbers and returns the result of adding them
 addP: function[a b][
     a + b
 ]
+; Takes in two numbers and returns the result of subtracting the second from the first
 subP: function[a b][
     a - b
 ]
+; Takes in two numbers and returns the result of multiplying them
 multP: function[a b][
     a * b
 ]
+; Takes in two numbers and returns the result of dividing the first by the second
 divP: function[a b][
     if? b = 0 -> print "Error cannot divide by zero"
     else -> a / b
 ]
+; Takes in two numbers and returns a boolean matching whether the first is less than or
+; equal to the second
 leqP: function [a b][
     a =< b
 ]
+; Takes in two numbers and returns a boolean matching whether the first is equal
+; to the second
 eqP: function [a b][
     a = b
 ]
@@ -129,6 +137,7 @@ define :appC [
 ; ]
 ; print lookup "true" topenv
 
+;Takes in a name (sym) and env and returns a value is the match value to name in the env
 lookup: function [sym env][
     if empty? env -> print "lookup error: symbol not in env"
     else -> [
